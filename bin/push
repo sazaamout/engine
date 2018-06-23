@@ -24,4 +24,4 @@ last_char=${DESTINATION:length-1:1}
 [[ $last_char != "/" ]] && DESTINATION="$DESTINATION/"; :
 
 # sync up the destination
-rsync -alvpt ../webapp/ $DESTINATION
+rsync -alvpt /home/dev/engine/webapp/ $DESTINATION
