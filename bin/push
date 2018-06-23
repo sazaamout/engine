@@ -1,0 +1,27 @@
+#!/bin/bash
+
+#
+# this script will use rsync to update the webapp
+# with the latest changes
+#
+
+
+# define usage function
+usage() {
+  echo "Usage: $0 destination"
+  exit 1
+}
+
+
+DESTINATION=$1
+
+# check if destination is empty
+[ -z "$var" ] && usage
+
+# if DESTINATION does not contains trailing slash, add it
+length=${#DESTINATION}
+last_char=${DESTINATION:length-1:1}
+[[ $last_char != "/" ]] && DESTINATION="$DESTINATION/"; :
+
+# sync up the destination
+rsync -alvpt ../webapp/ $DESTINATION
