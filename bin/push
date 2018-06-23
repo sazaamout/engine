@@ -16,7 +16,7 @@ usage() {
 DESTINATION=$1
 
 # check if destination is empty
-[ -z "$var" ] && usage
+[ -z "$DESTINATION" ] && usage
 
 # if DESTINATION does not contains trailing slash, add it
 length=${#DESTINATION}

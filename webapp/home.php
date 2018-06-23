@@ -1,5 +1,5 @@
 <?php
-  include '/etc/db_credentials.php';
+  include '/etc/database.php';
   
   $mysqli = new mysqli( $db_endpoint, 
                         $db_username, 
