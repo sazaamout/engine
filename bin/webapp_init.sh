@@ -6,26 +6,41 @@
 #
 
 # collect data from client
-echo "What is the database username: "
-read db_username
+DB_USR=$(cat /etc/database.php | grep db_username | cut -d"=" -f2 | grep -oP [a-zA-Z0-9\._-]+)
+DB_PWD=$(cat /etc/database.php | grep db_password | cut -d"=" -f2 | grep -oP [a-zA-Z0-9\._-]+)
+DB_HST=$(cat /etc/database.php | grep db_endpoint | cut -d"=" -f2 | grep -oP [a-zA-Z0-9\._-]+)
+DB_NME=$(cat /etc/database.php | grep db_name     | cut -d"=" -f2 | grep -oP [a-zA-Z0-9\._-]+)
+S3_NME=$(cat /etc/database.php | grep s3_name     | cut -d"=" -f2 | grep -oP [a-zA-Z0-9\._-]+)
+AS_NME=$(cat /etc/database.php | grep as_name     | cut -d"=" -f2 | grep -oP [a-zA-Z0-9\._-]+)
 
-echo "what is the database password:"
-read db_password
+echo $DB_USR 
+echo $DB_PWD 
+echo $DB_HST 
+echo $DB_NME
+echo $S3_NME
+echo $AS_NME
+exit
 
-echo "what is the database name:"
-read db_name
+#echo "What is the database username: "
+#read db_username
 
-echo "how about the database endpoint:"
-read db_endpoint
+#echo "what is the database password:"
+#read db_password
 
-echo "the name of the configurtaion s3 bucket name:"
-read s3_destination
+#echo "what is the database name:"
+#read db_name
 
-echo "and finally, autoscaling name:"
-read autoscaling_name
+#echo "how about the database endpoint:"
+#read db_endpoint
+
+#echo "the name of the configurtaion s3 bucket name:"
+#read s3_destination
+
+#echo "and finally, autoscaling name:"
+#read autoscaling_name
 
 # populat the database with the sample data i created
-aws s3 cp s3://$s3_destination/db/mydbdump.sql ~/ 
+aws s3 cp s3://$S3_NME/db/mydbdump.sql ~/ 
 if [ $? -ne 0 ]; then
   echo "cannot download file from s3."
   exit 1
@@ -33,7 +48,7 @@ else
   echo "database file was downloaded"
 fi
   
-mysql -h $db_endpoint -u $db_username -p$db_password -D $db_name < ~/mydbdump.sql 
+mysql -h $DB_HST -u $DB_USR -p$DB_PWD -D $DB_NAME < ~/mydbdump.sql 
 if [ $? -ne 0 ]; then
   echo "could not populate database, somethin went wrong"
   exit 1
@@ -43,7 +58,7 @@ fi
 
 # starting the autoscaling group
 aws autoscaling update-auto-scaling-group \
-    --auto-scaling-group-name $autoscaling_name \
+    --auto-scaling-group-name $AS_NME \
     --min-size 2 \
     --max-size 5 \
     --desired-capacity 2 
