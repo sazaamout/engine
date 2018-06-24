@@ -34,8 +34,9 @@ exit
 #echo "the name of the configurtaion s3 bucket name:"
 #read s3_destination
 
-#echo "and finally, autoscaling name:"
-#read autoscaling_name
+echo "what is the autoscaling group name?"
+echo "hinst: you can get it from the terraform output"
+read autoscaling_name
 
 # populat the database with the sample data i created
 aws s3 cp s3://$S3_NME/db/mydbdump.sql ~/ 
@@ -56,7 +57,7 @@ fi
 
 # starting the autoscaling group
 aws autoscaling update-auto-scaling-group \
-    --auto-scaling-group-name $AS_NME \
+    --auto-scaling-group-name $autoscaling_name \
     --min-size 2 \
     --max-size 5 \
     --desired-capacity 2 
@@ -68,3 +69,4 @@ else
   echo "your webapp is launched, should be ready in few minutes"
   exit 0
 fi
+
