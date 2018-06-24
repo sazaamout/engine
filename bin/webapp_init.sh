@@ -10,7 +10,7 @@ DB_USR=$(cat /etc/database.php | grep db_username    | cut -d"=" -f2 | grep -oP 
 DB_PWD=$(cat /etc/database.php | grep db_password    | cut -d"=" -f2 | grep -oP [a-zA-Z0-9\._-]+)
 DB_HST=$(cat /etc/database.php | grep db_endpoint    | cut -d"=" -f2 | grep -oP [a-zA-Z0-9\._-]+)
 DB_NME=$(cat /etc/database.php | grep db_name        | cut -d"=" -f2 | grep -oP [a-zA-Z0-9\._-]+)
-S3_NME=$(cat /etc/database.php | grep s3_name | cut -d"=" -f2 | grep -oP [a-zA-Z0-9\._-]+)
+S3_NME=$(cat /etc/database.php | grep s3_name        | cut -d"=" -f2 | grep -oP [a-zA-Z0-9\._-]+)
 
 
 echo "what is the autoscaling group name?"
