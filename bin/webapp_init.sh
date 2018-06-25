@@ -20,7 +20,7 @@ read autoscaling_name
 # populat the database with the sample data i created
 aws s3 cp s3://$S3_NME/db/mydbdump.sql ~/ 
 if [ $? -ne 0 ]; then
-  echo "cannot download file from s3."
+  echo "> error: cannot download file from s3."
   exit 1
 else
   echo "database file was downloaded"
@@ -28,11 +28,20 @@ fi
   
 mysql -h $DB_HST -u $DB_USR -p$DB_PWD -D $DB_NME < ~/mydbdump.sql 
 if [ $? -ne 0 ]; then
-  echo "could not populate database, somethin went wrong"
+  echo "> error: could not populate database, somethin went wrong"
   exit 1
 else 
   echo "database was populated with data successfuly"
 fi
+
+# check if autoscaling exsit
+res=$(aws autoscaling describe-auto-scaling-groups \
+      --auto-scaling-group-names $autoscaling_name \
+      --query "AutoScalingGroups[]" --output text)
+if [ -z "$res" ]; then
+  echo "> error: could not find the autoscaling group. Please check the autoscaling name again."
+  exit 1
+fi 
 
 # starting the autoscaling group
 aws autoscaling update-auto-scaling-group \
@@ -42,7 +51,7 @@ aws autoscaling update-auto-scaling-group \
     --desired-capacity 2 
 
 if [ $? -ne 0 ]; then
-  echo "could not trigger autoscaling to start, somethin went wrong"
+  echo "> error: could not trigger autoscaling to start, somethin went wrong"
   exit 1
 else
   echo "your webapp is launched, should be ready in few minutes"
